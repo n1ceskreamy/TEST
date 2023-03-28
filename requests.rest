@@ -1,0 +1,55 @@
+### start
+
+POST http://0.0.0.0:6064/start HTTP/1.1
+content-type: application/json
+auth: very-secure-token
+
+###send key T
+
+POST http://0.0.0.0:6064/key_in HTTP/1.1
+content-type: application/json
+auth: very-secure-token
+
+{
+    "name": "T"
+} 
+
+###send key S
+
+POST http://0.0.0.0:6064/key_in HTTP/1.1
+content-type: application/json
+auth: very-secure-token
+
+{
+    "name": "S"
+} 
+
+###send key T out
+
+POST http://0.0.0.0:6064/key_out HTTP/1.1
+content-type: application/json
+auth: very-secure-token
+
+{
+    "name": "T"
+} 
+
+###send key out S
+
+POST http://0.0.0.0:6064/key_out HTTP/1.1
+content-type: application/json
+auth: very-secure-token
+
+{
+    "name": "S"
+} 
+
+###stop
+
+POST http://0.0.0.0:6064/stop HTTP/1.1
+content-type: application/json
+auth: very-secure-token
+
+{
+    
+} 
