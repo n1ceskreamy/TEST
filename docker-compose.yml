@@ -1,11 +1,11 @@
 version: '3.4'
 
 services:
-  center:
-    image: center
+  scada:
+    image: scada
     build:
       context: .
-      dockerfile: ./Dockerfile.command_center
+      dockerfile: ./Dockerfile.scada
     ports:
       - "6069:6069"   
 
@@ -21,11 +21,11 @@ services:
     ports:
       - "6064:6064"
 
-  defence:
-    image: defence
+  protection:
+    image: protection
     build:
       context: .
-      dockerfile: ./Dockerfile.defence_system
+      dockerfile: ./Dockerfile.protection_system
     ports:
       - "6068:6068"
 

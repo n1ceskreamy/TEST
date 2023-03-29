@@ -7,12 +7,12 @@ ENV PYTHONUNBUFFERED=1
 COPY requirements.txt .
 RUN python -m pip install -r requirements.txt
 
-COPY defence_system /defence_system
+COPY protection_system /protection_system
 
-#RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /defence_system
+#RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /protection_system
 #USER appuser
 
-WORKDIR /defence_system
+WORKDIR /protection_system
 CMD ["python", "system.py"]
 
 EXPOSE 6068
