@@ -17,7 +17,7 @@ execute in VS Code terminal window either
 - _make run_
 - or _docker-compose up_
 
-then open the requests.rest file in Visual Studio Code editor. If you have the REST client extention installed, you will see 'Send request' active text above GET or POST requests, you can click on it.
+then open the requests.rest file in Visual Studio Code editor. If you have the REST client extension installed, you will see 'Send request' active text above GET or POST requests, you can click on it.
 
 Logical order of requests is next: start -> { key_in -> key_in -> { key_out -> key_out }} -> stop
 

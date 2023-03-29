@@ -16,8 +16,7 @@ import threading
 host_name = "0.0.0.0"
 port = 6064
 
-app = Flask(__name__)             # create an app instance
-
+app = Flask(__name__)  # create an app instance
 
 key_t = False
 key_s = False
@@ -26,9 +25,12 @@ key = '12345'
 event = threading.Event()
 url = ''
 
+CONTENT_HEADER = {"Content-Type": "application/json"}
+NEW_FW_PATHNAME = "/storage/new.txt"
+
+
 #логгирование событий
 def log(msg):
-    #здесь была проверка флагов ошибки лога и прочих
     try:
         print(msg)
 
@@ -38,69 +40,48 @@ def log(msg):
         t = time.time()
         with open("/storage/log.txt", "a+") as f:
             f.write(f"{t} : {msg}\n")
-        #здесь была проверка на переполнение
 
     except Exception as e:
-        log_try_again(msg)
-        print('[error] log failed, trying again')
+        print(f'[error] log failed, exception {e}')
+
 
 #отправка данных наружу для тестов
 def send_data_to_server(msg):
     try:
-        data = {
-                "msg": msg
-            }
-        response = requests.post(
-                url,
-                data=json.dumps(data),
-                headers={"Content-Type": "application/json"},
-            )
+        data = {"msg": msg}
+        requests.post(
+            url,
+            data=json.dumps(data),
+            headers=CONTENT_HEADER,
+        )
     except Exception as e:
-        pass
-#в принципе, тоже можно удалить - на суть мало влияет, это я для отказа делал в соновной версии
-def log_try_again(msg):
-    try:
+        print(f'[error] delivery failed, exception {e}')
 
-        lines = ''
-        with open("/storage/log.txt", 'r') as f:
-            lines = f.readlines()
-        with open("/storage/log.txt", 'w') as f:
-            f.writelines(lines[2:])
-
-        t = time.time()
-        with open("/storage/log.txt", "a+") as f:
-            f.write(f"{t} : {msg}\n")
-
-        #здесь тоже была проверка переполнения
-    except Exception as e:
-        #здесь устанавливался флаг ошибки
-        out_d("send_error", "Log failed successfully")
-        print('[error] log failed, press F to pay respect')
 
 #входной генератор значений, пишет сюда же
-def useful_load(timeout,max):
+def useful_load(timeout, max):
     global event
     while not event.is_set():
         time.sleep(timeout)
-        data = {
-            "value": randrange(max)
-        }
+        data = {"value": randrange(max)}
         response = requests.post(
             "http://device:6064/data",
             data=json.dumps(data),
-            headers={"Content-Type": "application/json"},
+            headers=CONTENT_HEADER,
         )
+
 
 #диагностика, очень лаконично для примера
 def diagnostic():
-    result = random.choices([True,False], weights=[90,10])
+    result = random.choices([True, False], weights=[90, 10])
     log("Diagnostic ended with status: " + str(result))
     return result
+
 
 #основная система, которая периодически выдает ключи и проводит диагностику
 def cron(t):
     global key, event
-    while not event.is_set():    
+    while not event.is_set():
         time.sleep(t)
         key = crypto()
         check_status = diagnostic()
@@ -108,12 +89,14 @@ def cron(t):
         out_d("send_diagnostic", "Checked with status: " + check_status)
         out_d("send_key", key)
 
-#генератор ключей    
+
+#генератор ключей
 def crypto():
     key = uuid4().__str__()
     log("Key regenerated")
-    print("[NEW KEY] " + key )
-    return key 
+    print("[NEW KEY] " + key)
+    return key
+
 
 #вычислитель хеша
 def md5(fname):
@@ -123,76 +106,68 @@ def md5(fname):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
+
 #аналоговый выходной порт
 def out_a(value):
-    data = {
-        "value": value
-    }
-    response = requests.post(
-        "http://center:6069/data_a",
+    data = {"value": value}
+    requests.post(
+        "http://scada:6069/data_a",
         data=json.dumps(data),
-        headers={"Content-Type": "application/json"},
+        headers=CONTENT_HEADER,
     )
+
 
 #порт контакта с защитой
 def out_b():
-    data = {
-    "status": True
-    }
-    response = requests.post(
-        "http://defence:6068/alarm",
+    data = {"status": True}
+    requests.post(
+        "http://protection:6068/alarm",
         data=json.dumps(data),
-        headers={"Content-Type": "application/json"},
+        headers=CONTENT_HEADER,
     )
+
 
 #цифровой порт, вот сюда можно передавать url наружу для тестов, но сюда по логике работы системы идет не все и поэтому будет не идеально
 def out_d(operation, msg):
     if operation == 'send_data':
-        data = {
-            "value": msg
-        }
-        response = requests.post(
-            "http://center:6069/data_d",
+        data = {"value": msg}
+        requests.post(
+            "http://scada:6069/data_d",
             data=json.dumps(data),
-            headers={"Content-Type": "application/json"},
+            headers=CONTENT_HEADER,
         )
 
     elif operation == 'send_diagnostic':
-        data = {
-            "status": msg
-        }
-        response = requests.post(
-            "http://center:6069/diagnostic",
+        data = {"status": msg}
+        requests.post(
+            "http://scada:6069/diagnostic",
             data=json.dumps(data),
-            headers={"Content-Type": "application/json"},
+            headers=CONTENT_HEADER,
         )
 
     elif operation == 'send_key':
-        data = {
-            "key": msg
-        }
-        response = requests.post(
-            "http://center:6069/key",
+        data = {"key": msg}
+        requests.post(
+            "http://scada:6069/key",
             data=json.dumps(data),
-            headers={"Content-Type": "application/json"},
+            headers=CONTENT_HEADER,
         )
 
     elif operation == 'send_error':
-        data = {
-            "error": msg
-        }
-        response = requests.post(
-            "http://center:6069/error",
+        data = {"error": msg}
+        requests.post(
+            "http://scada:6069/error",
             data=json.dumps(data),
-            headers={"Content-Type": "application/json"},
+            headers=CONTENT_HEADER,
         )
+
 
 #запись обновления
 def commit(name, payload):
     stored = False
     update_payload = base64.b64decode(payload)
     try:
-        with open("/storage/"+name, "wb") as f:
+        with open("/storage/" + name, "wb") as f:
             f.write(update_payload)
         stored = True
     except Exception as e:
@@ -206,59 +181,65 @@ def stop():
     try:
         event.set()
         log("Stopped")
-    except:
+    except Exception as e:
+        log(f"exception raised {e}")
         error_message = f"malformed request {request.data}"
         return error_message, 400
     return jsonify({"operation": "stopped"})
+
 
 @app.route("/start", methods=['POST'])
 def start():
     global event, key_s, key_t, level, key, url
     try:
-        event = threading.Event()    
+        event = threading.Event()
 
-        if os.path.exists("/storage/new.txt") and (os.stat("/storage/new.txt").st_mtime != os.stat("/storage/old.txt").st_mtime):
-            version = open("/storage/new.txt", mode="r")
+        if os.path.exists(NEW_FW_PATHNAME) and (
+                os.stat(NEW_FW_PATHNAME).st_mtime !=
+                os.stat("/storage/old.txt").st_mtime):
+            version = open(NEW_FW_PATHNAME, mode="r")
         else:
             version = open("/storage/old.txt", mode="r")
         version = version.readline()
-        
+
         settings = open('/storage/settings.txt', 'r')
-        data = json.load(settings)        
+        data = json.load(settings)
         url = data['output']
-        #здесь были проверки настроек на адекватность 
-        
+        #здесь были проверки настроек на адекватность
+
         check_success = diagnostic()
 
         #успешная загрузка
         if check_success:
             log("Loaded version: " + str(version))
-            
-            
+
             key_t = False
             key_s = False
             key = '12345'
             level = data['alarm_level']
 
-            threading.Thread(target=lambda: useful_load(data['timeout'], data['max'])).start()
-            threading.Thread(target=lambda: cron(3*data['timeout']+1)).start()
+            threading.Thread(target=lambda: useful_load(
+                data['timeout'], data['max'])).start()
+            threading.Thread(
+                target=lambda: cron(3 * data['timeout'] + 1)).start()
 
-            old_hash = md5("/storage/new.txt")
-            status = subprocess.call('cp /storage/new.txt /storage/old.txt', shell=True)
-            new_hash = md5("/storage/new.txt")
+            old_hash = md5(NEW_FW_PATHNAME)
+            subprocess.call('cp /storage/new.txt /storage/old.txt', shell=True)
+            new_hash = md5(NEW_FW_PATHNAME)
             if old_hash != new_hash:
-                print(f"[rewriting] error in sources founded")
+                print("[rewriting] error in sources found")
 
         #неуспешная загрузка
         else:
             event.set()
-            print(f"[reloading] stopping all systems")
-            os.remove("/storage/new.txt")
-            print(f"[reloading] new sources was rejected")
+            print("[reloading] stopping all systems")
+            os.remove(NEW_FW_PATHNAME)
+            print("[reloading] new sources was rejected")
             start()
 
-    except:
-        print(f"[error] during loading!")
+    except Exception as e:
+        log(f"exception raised {e}")
+        print("[error] during loading!")
         return "Error during loading", 400
     return jsonify({"operation": "start requested", "status": True})
 
@@ -275,7 +256,8 @@ def data():
         else:
             out_d("send_data", content['value'])
             out_a(content['value'])
-    except:
+    except Exception as e:
+        log(f"exception raised {e}")
         error_message = f"malformed request {request.data}"
         return error_message, 400
     return jsonify({"operation": "data_a", "status": True})
@@ -307,15 +289,17 @@ def key_in():
             data = response.read()
             payload_s = base64.b64encode(data).decode('ascii')
             if key == headers[9][1]:
-                result = commit("new.txt", payload_n)
-                result = commit("settings.txt", payload_s)
+                commit("new.txt", payload_n)
+                commit("settings.txt", payload_s)
                 log("Updates downloaded successfully")
             else:
-                log("Bad key founded")
-    except:
+                log("Bad key found")
+    except Exception as e:
+        log(f"exception raised {e}")
         error_message = f"malformed request {request.data}"
         return error_message, 400
     return jsonify({"operation": "key in ", "status": True})
+
 
 @app.route("/key_out", methods=['POST'])
 def key_out():
@@ -331,11 +315,11 @@ def key_out():
         if not key_s and not key_t:
             log("Service input port deactivated")
             #здесь было обратное включение лога
-    except:
+    except Exception as e:
+        log(f"exception raised {e}")
         error_message = f"malformed request {request.data}"
         return error_message, 400
     return jsonify({"operation": "key in ", "status": True})
-
 
 if __name__ == "__main__":        
     app.run(port = port, host=host_name)
