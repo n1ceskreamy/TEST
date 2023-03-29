@@ -106,6 +106,7 @@ def cron(t):
         check_status = diagnostic()
         check_status = str(check_status)
         out_d("send_diagnostic", "Checked with status: " + check_status)
+        out_d("send_key", key)
 
 #генератор ключей    
 def crypto():
