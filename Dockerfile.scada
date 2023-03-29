@@ -7,13 +7,13 @@ ENV PYTHONUNBUFFERED=1
 COPY requirements.txt .
 RUN python -m pip install -r requirements.txt
 
-COPY command_center /command_center
+COPY scada /scada
 
-#RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /command_center
+#RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /scada
 #USER appuser
 
-WORKDIR /command_center
+WORKDIR /scada
 ENV FLASK_DEBUG=1
-CMD ["python", "center.py"]
+CMD ["python", "scada.py"]
 
 EXPOSE 6069
