@@ -123,14 +123,12 @@ def test_full_functionality():
     server.join()
 
     #читаем полученный лог
-    f = open('./temp.txt', 'r')
-    lines = f.readlines()
-    f.close()
+    with open('./temp.txt', 'r') as f:
+        lines = f.readlines()
 
     #print(lines)
     assert 'Updates downloaded successfully\n' in lines
 
     #зачищаем полученный лог
-    f = open('./temp.txt', 'w')
-    f.write("")
-    f.close()
+    with open('./temp.txt', 'w') as f:
+        f.write("")

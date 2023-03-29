@@ -4,7 +4,7 @@ sys-packages:
 	sudo pip3 install pipenv
 
 pipenv:
-	pipenv install -r requirements.txt
+	pipenv install -r requirements.txt -r requirements-dev.txt	
 
 prepare: clean sys-packages pipenv build
 
