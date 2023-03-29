@@ -321,6 +321,5 @@ def key_out():
         return error_message, 400
     return jsonify({"operation": "key in ", "status": True})
 
-
-if __name__ == "__main__":
-    app.run(port=port, host=host_name)
+if __name__ == "__main__":        
+    app.run(port = port, host=host_name)
