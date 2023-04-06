@@ -1,9 +1,7 @@
 import base64
-from hashlib import sha256
 import hashlib
 import json
 import os
-from random import randrange
 import random
 import subprocess
 import time
@@ -29,7 +27,7 @@ CONTENT_HEADER = {"Content-Type": "application/json"}
 NEW_FW_PATHNAME = "/storage/new.txt"
 
 
-#логгирование событий
+# логгирование событий
 def log(msg):
     try:
         print(msg)
@@ -58,21 +56,8 @@ def send_data_to_server(msg):
         print(f'[error] delivery failed, exception {e}')
 
 
-#входной генератор значений, пишет сюда же
-def useful_load(timeout, max):
-    global event
-    while not event.is_set():
-        time.sleep(timeout)
-        data = {"value": randrange(max)}
-        response = requests.post(
-            "http://device:6064/data",
-            data=json.dumps(data),
-            headers=CONTENT_HEADER,
-        )
-
-
-#диагностика, очень лаконично для примера
-def diagnostic():
+# заглушка логики контроля параметров прикладной программы
+def settings_sanity_check():
     result = random.choices([True, False], weights=[90, 10])
     log("Diagnostic ended with status: " + str(result))
     return result
@@ -84,7 +69,7 @@ def cron(t):
     while not event.is_set():
         time.sleep(t)
         key = crypto()
-        check_status = diagnostic()
+        check_status = settings_sanity_check()
         check_status = str(check_status)
         out_d("send_diagnostic", "Checked with status: " + check_status)
         out_d("send_key", key)
@@ -207,7 +192,7 @@ def start():
         url = data['output']
         #здесь были проверки настроек на адекватность
 
-        check_success = diagnostic()
+        check_success = settings_sanity_check()
 
         #успешная загрузка
         if check_success:
@@ -218,8 +203,6 @@ def start():
             key = '12345'
             level = data['alarm_level']
 
-            threading.Thread(target=lambda: useful_load(
-                data['timeout'], data['max'])).start()
             threading.Thread(
                 target=lambda: cron(3 * data['timeout'] + 1)).start()
 
@@ -321,5 +304,6 @@ def key_out():
         return error_message, 400
     return jsonify({"operation": "key in ", "status": True})
 
-if __name__ == "__main__":        
-    app.run(port = port, host=host_name)
+
+if __name__ == "__main__":
+    app.run(port=port, host=host_name)
