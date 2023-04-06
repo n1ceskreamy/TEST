@@ -1,6 +1,12 @@
 version: '3.4'
 
 services:
+  sensor:
+    image: sensor
+    build:
+      context: .
+      dockerfile: ./Dockerfile.sensor
+
   scada:
     image: scada
     build:
