@@ -1,4 +1,4 @@
-from multiprocessing import Process
+from multiprocessing import Process, Queue
 import threading
 from time import sleep
 from flask import Flask, jsonify, request
@@ -13,25 +13,27 @@ REQUEST_HEADERS = {
     "Content-Type": "application/json",
     "auth": "very-secure-token"
 }
+global_events_log = Queue()
 
-#сервер для приёма сообщений с клиента в тестовых целях
+
+# сервер для приёма сообщений с клиента в тестовых целях
 app = Flask(__name__)  # create an app instance
 
 
 @app.route("/", methods=['POST'])
 def data_receive():
+    global global_events_log
     try:
         content = request.json
-        #print(content['msg'])
-        with open('./temp.txt', 'a+') as f:
-            f.write(content['msg'] + "\n")
+        print(f"получено сообщение: {content['msg']}")
+        global_events_log.put(content['msg'])                
     except Exception as e:
         print(e)
         return "BAD DATA RESPONSE", 400
     return jsonify({"status": True})
 
 
-#начало работы, загрузка, "включение тумблера"
+# начало работы, загрузка, "включение тумблера"
 def start():
     data = {}
     response = requests.post(
@@ -42,7 +44,7 @@ def start():
     assert response.status_code == 200
 
 
-#авторизация ключа
+# авторизация ключа
 def key_in(name):
     data = {"name": name}
     response = requests.post(
@@ -53,7 +55,7 @@ def key_in(name):
     assert response.status_code == 200
 
 
-#извлечение указанного ключа
+# извлечение указанного ключа
 def key_out(name):
     data = {"name": name}
     response = requests.post(
@@ -75,16 +77,14 @@ def stop():
     assert response.status_code == 200
 
 
-#def key_changing(event):
-#можно добавить, но это безопасность, по сути, тут она не нужна
-
 ###
 ### Functionally tests
 ###
 
 
 def test_full_functionality():
-    #поднимаем сервер для приёма сообщений
+    # поднимаем тестовую скаду для приёма сообщений
+    global global_events_log
     server = Process(target=lambda: app.run(port=port, host=host_name))
     server.start()
 
@@ -100,14 +100,7 @@ def test_full_functionality():
         f.close()
     start()
 
-    #блок остался от изменения ключей, пока оставил
-    # thread = threading.Thread(target=lambda: key_changing(event))
-    # thread.start()
-    #f = open('./file_server/data/key.txt', 'w')
-    #f.write(key)
-    #f.close()
-
-    #вводим ключи, даем отработать, извлекаем ключи, завершая работу с обновлением
+    # вводим ключи, даем отработать, извлекаем ключи, завершая работу с обновлением
     sleep(2)
     key_in('T')
     key_in('S')
@@ -118,17 +111,18 @@ def test_full_functionality():
     stop()
     sleep(2)
 
-    #освобождаем порт
+    # останавливаем тестовую скаду
     server.terminate()
     server.join()
 
-    #читаем полученный лог
-    with open('./temp.txt', 'r') as f:
-        lines = f.readlines()
-
-    #print(lines)
-    assert 'Updates downloaded successfully\n' in lines
-
-    #зачищаем полученный лог
-    with open('./temp.txt', 'w') as f:
-        f.write("")
+    events_log = []
+    try:
+        # считываем все накопленные события
+        while True:
+            event = global_events_log.get_nowait()
+            events_log.append(event)
+    except Exception as _:
+        # больше событий нет
+        pass
+    # print(f"список событий: {events_log}")
+    assert 'Updates downloaded successfully' in events_log
