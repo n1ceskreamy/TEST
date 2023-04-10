@@ -40,4 +40,4 @@ test:
 
 
 clean:
-	pipenv --rm; rm -rf Pipfile*; echo cleanup complete
+	docker-compose down; pipenv --rm; rm -rf Pipfile*; echo cleanup complete
