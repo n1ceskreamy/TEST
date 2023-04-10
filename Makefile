@@ -36,5 +36,4 @@ test:
 
 
 clean:
-	pipenv --rm
-	rm -rf Pipfile*
+	pipenv --rm; rm -rf Pipfile*; echo cleanup complete
