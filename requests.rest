@@ -1,50 +1,50 @@
-### start
+### Начало работы всей системы, стартует загрузку устройства с заданными настройками и версией
 
 POST http://0.0.0.0:6064/start HTTP/1.1
 content-type: application/json
 auth: very-secure-token
 
-###send key T
+### Отправка (эмуляция аппаратного включения) ключа технического специалиста (для работы с системой нужны ключи и технического специалиста и специалиста по безопасности)
 
 POST http://0.0.0.0:6064/key_in HTTP/1.1
 content-type: application/json
 auth: very-secure-token
 
 {
-    "name": "T"
+    "name": "Technical"
 } 
 
-###send key S
+### Отправка ключа специалиста по безопасности
 
 POST http://0.0.0.0:6064/key_in HTTP/1.1
 content-type: application/json
 auth: very-secure-token
 
 {
-    "name": "S"
+    "name": "Security"
 } 
 
-###send key T out
+### Извлечение ключа технического специалиста (служебный порт прекращает работу только по извлечению обоих ключей)
 
 POST http://0.0.0.0:6064/key_out HTTP/1.1
 content-type: application/json
 auth: very-secure-token
 
 {
-    "name": "T"
+    "name": "Technical"
 } 
 
-###send key out S
+### Извлечение ключа специалиста по безопасности (служебный порт прекращает работу только по извлечению обоих ключей)
 
 POST http://0.0.0.0:6064/key_out HTTP/1.1
 content-type: application/json
 auth: very-secure-token
 
 {
-    "name": "S"
+    "name": "Security"
 } 
 
-###stop
+### Остановка всех процессов в системе, требует start после себя, чтобы начать выполнение повторно с обнулением изменений в значениях переменных (но не в файлах настроек и версий).
 
 POST http://0.0.0.0:6064/stop HTTP/1.1
 content-type: application/json

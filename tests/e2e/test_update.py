@@ -102,11 +102,11 @@ def test_full_functionality():
 
     # вводим ключи, даем отработать, извлекаем ключи, завершая работу с обновлением
     sleep(2)
-    key_in('T')
-    key_in('S')
+    key_in('Technical')
+    key_in('Security')
     sleep(15)
-    key_out('T')
-    key_out('S')
+    key_out('Technical')
+    key_out('Security')
     sleep(2)
     stop()
     sleep(2)

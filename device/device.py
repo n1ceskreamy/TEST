@@ -68,19 +68,11 @@ def cron(t):
     global key, event
     while not event.is_set():
         time.sleep(t)
-        key = crypto()
         check_status = settings_sanity_check()
         check_status = str(check_status)
         out_d("send_diagnostic", "Checked with status: " + check_status)
-        out_d("send_key", key)
 
 
-#генератор ключей
-def crypto():
-    key = uuid4().__str__()
-    log("Key regenerated")
-    print("[NEW KEY] " + key)
-    return key
 
 
 #вычислитель хеша
@@ -112,7 +104,7 @@ def out_b():
     )
 
 
-#цифровой порт, вот сюда можно передавать url наружу для тестов, но сюда по логике работы системы идет не все и поэтому будет не идеально
+#цифровой порт
 def out_d(operation, msg):
     if operation == 'send_data':
         data = {"value": msg}
@@ -190,7 +182,6 @@ def start():
         settings = open('/storage/settings.txt', 'r')
         data = json.load(settings)
         url = data['output']
-        #здесь были проверки настроек на адекватность
 
         check_success = settings_sanity_check()
 
@@ -251,15 +242,14 @@ def key_in():
     global key_t, key_s, key
     content = request.json
     try:
-        if content['name'] == 'S':
+        if content['name'] == 'Security':
             key_s = True
-        if content['name'] == 'T':
+        if content['name'] == 'Technical':
             key_t = True
         log("Key input event: " + str(content['name']))
 
         if key_t and key_s:
             log("Service input port activated")
-            #здесь была остановка лога
             payload_n = ''
             payload_s = ''
             request_url = 'http://file_server:6001/download-update/new.txt'
@@ -289,15 +279,14 @@ def key_out():
     global key_t, key_s
     content = request.json
     try:
-        if content['name'] == 'S':
+        if content['name'] == 'Security':
             key_s = False
-        if content['name'] == 'T':
+        if content['name'] == 'Technical':
             key_t = False
         log("Key output event: " + str(content['name']))
 
         if not key_s and not key_t:
             log("Service input port deactivated")
-            #здесь было обратное включение лога
     except Exception as e:
         log(f"exception raised {e}")
         error_message = f"malformed request {request.data}"
