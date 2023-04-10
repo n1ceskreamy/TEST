@@ -42,12 +42,18 @@ make all
 
 Для ручного тестирования в VS Code откройте файл requests.rest, при наведении мышкой на GET и POST запросы появится текст 'Send request', при нажатии на него запрос будет выполнен.
 
-Логическая последовательность: start -> { key_in -> key_in -> { key_out -> key_out }} -> stop
+Диаграмма последовательности данного примера имеет следующий вид:
+
+//www.plantuml.com/plantuml/png/dLLHRjD04FtVK-n_o0NuGBq1HwYiP2D5IcChQohnrmH28XdH7oGG4eNI2vYsfcv2d2lCteWtEsvg9uwKOCcmtfbvyzwytVJ4ni4eVdCsK2henE58o_CwCgE0FmEhGnKXfT_fHy4mrbrptkyOtfTLBTZh3yofDQDpuojxjXQDHc5iEd4_79xQjpOsPvmJrNDi9-W6lB-rROPMsCXAuGbr-rL9ejLwgUdQJIXr5swYPFCvZE0FTq45tLA6_nUKQbfHIalAtGplfKRiDxQGWSqCgvmUrI0C8qrNzOYaS_KZtVE6IvhwVVSLAUUkkRMR0_AMMoipiAQffEI_fsZORQm1ZxzKW4cErHqJTMFWvBv81DouCQqXVCxHNP06XPHfzzuhNFBsDfjyhuGR44ahA0Bh4ZUj0Ru08Zk1l0Uc3TFUOSM-W6k1Vqeh4uZBlVOdCn0NgYi_9nuNs1USh-Hej5hbeiRiC_9MR1Pb1noF4g7Tzcqbd7aXSz5MGuciFt-_90auTxikSqgT1QjYzADjhQ8YzoTF4VDRkez-QXCLMH3d5oqsRHfjLc6jxJU0V78p3PpCJJd5pR0Qqu95UMEySHyebziZHZMZx4c6zG025VQ-m4UAl8s-YhQUZEmBYkNuZHjkgRjKFRjxyLnIES8kyVUL6p0E2XUQSfXALoXkjm_wkLXxDzQiWl8DzE5tx1e2fW1Z_-ktGqPRXJpkTZNKm_8jJxxIWmpDpPxB5s8KfSSQVYJu_vo3_QRSurtIdwTEbPy0boZHNZud-C1Vjdy0
+
+В соответствии с ней, логическая последовательность команд следующая: start -> { 2 * key_in (Не важен порядок) -> { 2 * key_out (Извлекать их не обязательно для завершения обновления, но желательно для корректной обработки состояний системы) }} -> stop
 
 _Start_ загрузит приложение, уставки, настройки.
 
-_Key in_ имитирует вставление аппаратного ключа, ключей два - S - для специалиста по безопасности, T - для техника. 
+_Key in_ имитирует подключение аппаратного ключа, ключей два - Security - для специалиста по безопасности, Technical - для техника. 
 
-Процесс обновления начинается только тогда, когда если ключа активированы.
+Процесс обновления начинается в тот момент, когда оба ключа оказываются активированы.
+
+_Key out_ имитирует извлечение ключа, что необходимо для корректного отображения состояния системы и ее продолжительной работы без перезапусков через start/stop.
 
 _Stop_ останавливает все внутренние процессы и очищает значение переменных.
