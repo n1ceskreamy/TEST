@@ -1,30 +1,53 @@
-# Disclaimer 
+# Условия использования 
 
-This is a demo project and shall not be used in production.
-The code is distributed under MIT license (see the LICENSE file).
+Применять только в учебных целях. Данных код может содержать ошибки, авторы не несут никакой ответственности за любые последствия использования этого кода.
+Условия использования и распространения - MIT лицензия (см. файл LICENSE).
 
+## Настройка и запуск
 
-## Running the demo
+### Системные требования
 
-There is the main options for running the demo:
-- containerized (using docker containers)
+Данный пример разработан и проверен на ОС Ubuntu 20.04.5, авторы предполагают, что без каких-либо изменений этот код может работать на любых Debian-подобных OS, для других Linux систем, а также для MAC OS необходимо использовать другой менеджер пакетов. В Windows необходимо самостоятельно установить необходимое ПО или воспользоваться виртуальной машиной с Ubuntu (также можно использовать WSL версии не ниже 2).
 
-There shall be docker-compose locally available.
+### Используемое ПО
 
-### Running complete demo in containerized mode
+Стандартный способ запуска демо предполагает наличие установленного пакета *docker*, а также *docker-compose*. Для автоматизации типовых операций используется утилита *make*, хотя можно обойтись и без неё, вручную выполняя соответствующие команды из файла Makefile в командной строке.
 
-execute in VS Code terminal window either
-- _make run_
-- or _docker-compose up_
+Другое используемое ПО (в Ubuntu будет установлено автоматически, см. следующий раздел):
+- python (желательно версия не ниже 3.8)
+- pipenv (для виртуальных окружений python)
 
-then open the requests.rest file in Visual Studio Code editor. If you have the REST client extension installed, you will see 'Send request' active text above GET or POST requests, you can click on it.
+Для работы с кодом примера рекомендуется использовать VS Code или PyCharm.
 
-Logical order of requests is next: start -> { key_in -> key_in -> { key_out -> key_out }} -> stop
+В случае использования VS Code следует установить расширения
+- REST client
+- Docker
+- Python
 
-_Start_ command will load app, preset values, load settings from sources.
+### Настройка окружения и запуск примера
 
-_Key in_ uses instead of hardware signal, there're two keys: "S" and "T" for secure- and technical specialists. 
+В терминале перейдите в папку проекта и выполните команду
 
-The update process will start after both keys are activated and it will stop after both keys are activated.
+```bash
+make all
+```
 
-_Stop_ command will terminate all subrocesses in app and clear variables, so we recommend to use it after each logically unique using of app.
+В результате будет создано виртуальное окружение для этого проекта, собраны необходимые docker образы, запущен пример и автоматический тест.
+
+Вывод должен быть похож на изображённый в следующей картинке, числа могут отличаться, т.к. генерируются случайным образом.
+
+![Результат выполнения команды](./docs/images/run-results.png)
+
+### REST запросы
+
+Для ручного тестирования в VS Code откройте файл requests.rest, при наведении мышкой на GET и POST запросы появится текст 'Send request', при нажатии на него запрос будет выполнен.
+
+Логическая последовательность: start -> { key_in -> key_in -> { key_out -> key_out }} -> stop
+
+_Start_ загрузит приложение, уставки, настройки.
+
+_Key in_ имитирует вставление аппаратного ключа, ключей два - S - для специалиста по безопасности, T - для техника. 
+
+Процесс обновления начинается только тогда, когда если ключа активированы.
+
+_Stop_ останавливает все внутренние процессы и очищает значение переменных.

@@ -1,10 +1,12 @@
+all: prepare build run test
+
 sys-packages:
-	# sudo apt install -y docker-compose
+	sudo apt install -y docker-compose
 	sudo apt install python3-pip -y
 	sudo pip3 install pipenv
 
 pipenv:
-	pipenv install -r requirements.txt -r requirements-dev.txt	
+	pipenv install -r requirements-dev.txt	
 
 prepare: clean sys-packages pipenv build
 
@@ -34,4 +36,5 @@ test:
 
 
 clean:
+	pipenv --rm
 	rm -rf Pipfile*
