@@ -1,4 +1,8 @@
-all: prepare build run test
+all: prepare build run delay5s test
+
+delay5s:
+	# can be used to let components start working
+	sleep 5
 
 sys-packages:
 	sudo apt install -y docker-compose
