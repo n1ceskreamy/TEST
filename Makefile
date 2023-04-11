@@ -1,4 +1,8 @@
-all: prepare build run test
+all: prepare build run delay5s test
+
+delay5s:
+	# can be used to let components start working
+	sleep 5
 
 sys-packages:
 	sudo apt install -y docker-compose
@@ -36,5 +40,4 @@ test:
 
 
 clean:
-	pipenv --rm
-	rm -rf Pipfile*
+	docker-compose down; pipenv --rm; rm -rf Pipfile*; echo cleanup complete
