@@ -48,7 +48,8 @@ make all
 
 ![Диаграмма последовательности](./docs/images/nf.png)
 
-//www.plantuml.com/plantuml/png/N8f12iD024NtSuevIc_G8mGnFo0aewWDzFQjp6hYol_UUqMIv-SwMoDEzJxlRN2gIT6rsJyH5gEHVSSjZEBpM-GX9xQ0t_0gZbYikIOuHSSMtqXSrTZQ1DDEnHyOurTQ5UH63GJ1-xnYxei_m07n699Jn4Ro1-A5nIiPaGiI28b0o0SS4fE9ZUqlTF-8wcwpzjfUoL4ETYOptTLLNJtUsDZOohcrZrvr55QhbvwkUKCvN_36sMP_ZCCVV44D_QO2VqlAFTMKKqM1KpoN7cUtL6j4HGLMWHxTsNfzxkbgV89mpNwaUzdWRAxUTyt89RQLqhoZW0sKTYTdySaafUT_9EdjczaSyFXB3PW4hEw4A2V02Pfa0cuueHR2Tt8w1p9HI8Ndzwgmakqnct1KmWs8v0CKW-MCjmU0Bu2eJXJq8BHXsZkin1TmRV3ghCmWBgZspWiS6zDQsoJT0lb6mftDnMhLBGw8VKPSBLvHiM0wEeGeqh9sNAYEdKaRec1-TVn-MH1mxgOc8sJ4uh-efxiwG4NiJsaYsbVnHstQnft788v7IkpBpBhirWTblm7a4wSUE0Ll9OHJh18gHPJwehvze62NntoQHpaI3ES1HBTgVOD_SavwVGDjfzQoBqYswKjcBYbVkjDuUkyu6qmmPtfTfO3W8B7q560gNI4vYXPzBLfrenKL5FRGow_ODGHiTLhhqUMmrWuXbr-k-NnOFhBaAprOppZjiqlpYV9d-Bq4_5bZCBRa7az5V_Q5-Wy0PqwLkzTuuzVi7m00
+[Cсылка на диаграмму для редактирования](//www.plantuml.com/plantuml/uml/N8f12iD024NtSuevIc_G8mGnFo0aewWDzFQjp6hYol_UUqMIv-SwMoDEzJxlRN2gIT6rsJyH5gEHVSSjZEBpM-GX9xQ0t_0gZbYikIOuHSSMtqXSrTZQ1DDEnHyOurTQ5UH63GJ1-xnYxei_m07n699Jn4Ro1-A5nIiPaGiI28b0o0SS4fE9ZUqlTF-8wcwpzjfUoL4ETYOptTLLNJtUsDZOohcrZrvr55QhbvwkUKCvN_36sMP_ZCCVV44D_QO2VqlAFTMKKqM1KpoN7cUtL6j4HGLMWHxTsNfzxkbgV89mpNwaUzdWRAxUTyt89RQLqhoZW0sKTYTdySaafUT_9EdjczaSyFXB3PW4hEw4A2V02Pfa0cuueHR2Tt8w1p9HI8Ndzwgmakqnct1KmWs8v0CKW-MCjmU0Bu2eJXJq8BHXsZkin1TmRV3ghCmWBgZspWiS6zDQsoJT0lb6mftDnMhLBGw8VKPSBLvHiM0wEeGeqh9sNAYEdKaRec1-TVn-MH1mxgOc8sJ4uh-efxiwG4NiJsaYsbVnHstQnft788v7IkpBpBhirWTblm7a4wSUE0Ll9OHJh18gHPJwehvze62NntoQHpaI3ES1HBTgVOD_SavwVGDjfzQoBqYswKjcBYbVkjDuUkyu6qmmPtfTfO3W8B7q560gNI4vYXPzBLfrenKL5FRGow_ODGHiTLhhqUMmrWuXbr-k-NnOFhBaAprOppZjiqlpYV9d-Bq4_5bZCBRa7az5V_Q5-Wy0PqwLkzTuuzVi7m00)
+
 
 В соответствии с ней, логическая последовательность команд следующая: start -> { 2 * key_in (Не важен порядок) -> { 2 * key_out (Извлекать их не обязательно для завершения обновления, но желательно для корректной обработки состояний системы) }} -> stop
 
@@ -70,8 +71,8 @@ _Stop_ останавливает все внутренние процессы �
 
 Хотя код этого примера написан на Python, команды могут по желанию своё решение сделать на других языках (C/C++, C#, Golang, Javascript/Typescript, Java, Rust, PHP), основные требования:
 1. использование брокера сообщений (предпочтительно Kafka, но можно RabbitMQ, Mosquitto)
-2. наличие функционального теста
-3. наличие тестов безопасности
+2. наличие хотя бы одного функционального теста
+3. наличие тестов безопасности (предпочтительно автоматизированных, в крайнем случае - описание ручных тестов безопасности)
 4. наличие монитора безопасности, который должен контролировать все взаимодействия между доменами безопасности
 5. наличие политик безопасности, которые использует монитор безопасности. Политики безопасности должны обеспечивать реализацию предложенной политики архитектуры.
 
